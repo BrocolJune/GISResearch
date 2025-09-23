@@ -16,9 +16,9 @@ import pandas as pd
 from tqdm import tqdm
 
 # 경로 설정
-shp_path      = r"C:\Users\user\Desktop\Junkyo\2025\Jeju_Sectorcoupling\GIS\Jeju_Polygon.shp"
-raster_folder = r"D:\Junkyo\2025\Jeju_Sectorcoupling\mask_v5"
-output_csv    = r"C:\Users\user\Desktop\Junkyo\2025\Jeju_Sectorcoupling\ValidCell\PowerArea_v5.csv"
+shp_path      = r"C:\Users\user\Desktop\Junkyo\2025\Jeju_Sectorcoupling\GIS\LSMD_ADM_SECT_UMD_50_202503.shp"
+raster_folder = r"D:\Junkyo\2025\Jeju_Sectorcoupling\mask_Final"
+output_csv    = r"C:\Users\user\Desktop\Junkyo\2025\Jeju_Sectorcoupling\ValidCell\PowerArea_Final.csv"
 
 # --- CRS check for first raster and shapefile ---
 raster_files = sorted([f for f in os.listdir(raster_folder) if f.lower().endswith('.tif')])
