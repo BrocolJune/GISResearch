@@ -3,8 +3,32 @@ import sys
 import numpy as np
 
 # GDAL 환경 변수 설정 (경고 메시지 방지)
-os.environ['GDAL_DATA'] = r'C:\Users\kjj04\anaconda3\Library\share\gdal'
-os.environ['PROJ_LIB'] = r'C:\Users\kjj04\anaconda3\Library\share\proj'
+# 일반적인 Anaconda GDAL 데이터 경로들을 시도
+possible_gdal_paths = [
+    r'C:\Users\kjj04\anaconda3\Library\share\gdal',
+    r'C:\Users\kjj04\anaconda3\share\gdal',
+    r'C:\Users\kjj04\anaconda3\pkgs\libgdal-*\Library\share\gdal'
+]
+
+possible_proj_paths = [
+    r'C:\Users\kjj04\anaconda3\Library\share\proj',
+    r'C:\Users\kjj04\anaconda3\share\proj',
+    r'C:\Users\kjj04\anaconda3\pkgs\proj-*\Library\share\proj'
+]
+
+# GDAL_DATA 설정
+if 'GDAL_DATA' not in os.environ:
+    for path in possible_gdal_paths:
+        if os.path.exists(path):
+            os.environ['GDAL_DATA'] = path
+            break
+
+# PROJ_LIB 설정  
+if 'PROJ_LIB' not in os.environ:
+    for path in possible_proj_paths:
+        if os.path.exists(path):
+            os.environ['PROJ_LIB'] = path
+            break
 
 import rasterio
 from rasterio.mask import mask
@@ -14,9 +38,9 @@ import pandas as pd
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 
-shp_path      = r"D:\Jeju_SectorCoupling_final\Jeju_wgs1984.shp"
-raster_folder = r"D:\Jeju_SectorCoupling_final\mask_Final"
-output_csv    = r"D:\Jeju_SectorCoupling_final\PowerArea_Final.csv"
+shp_path      = r"C:\Users\user\Desktop\Junkyo\2025\Jeju_Sectorcoupling\GIS\Jeju_wgs1984.shp"
+raster_folder = r"D:\Junkyo\2025\Jeju_Sectorcoupling\mask_Final"
+output_csv    = r"C:\Users\user\Desktop\Junkyo\2025\Jeju_Sectorcoupling\ValidCell\PowerArea_Final.csv"
 
 raster_files = sorted([f for f in os.listdir(raster_folder) if f.lower().endswith('.tif')])
 if not raster_files:
@@ -76,6 +100,11 @@ def count_valid_cells(fname):
     return result
 
 if __name__ == "__main__":
+    print("=== GDAL 환경 변수 확인 ===")
+    print(f"GDAL_DATA: {os.environ.get('GDAL_DATA', 'Not set')}")
+    print(f"PROJ_LIB: {os.environ.get('PROJ_LIB', 'Not set')}")
+    print("=" * 50)
+    
     with Pool(cpu_count()) as pool:
         stats_list = list(tqdm(pool.imap(count_valid_cells, raster_files), total=len(raster_files), desc="래스터 병렬 처리중"))
     stats_df = pd.DataFrame(stats_list)
